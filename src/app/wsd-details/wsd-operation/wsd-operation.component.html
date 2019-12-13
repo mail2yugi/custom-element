@@ -1,0 +1,228 @@
+<div *ngIf="operations?.length <= 1 && !isWsdlFirst && allOperationAreResolved && activeStage.getActiveStage().id === 'stage00'" class="col-12 padding-left-0 padding-right-0">
+    <div class="alert alert-info context-message-div context-message-for-certificate">
+        <div class="context-wmic-info">
+            <i class="icons8-info message-dialog-wmic-icon"></i>
+        </div>
+        <div class="vertical-align-middle table-cell">
+            <p class="message-dialog-text message-dialog-int-view-text remove-bottom display-block">You will not be able to delete the Operation because there must be at least one Operation available in the SOAP API.</p>
+        </div>
+    </div>
+</div>
+<div *ngIf="!isWsdlFirst && !allOperationAreResolved && activeStage.getActiveStage().id === 'stage00'" class="col-12 padding-left-0 padding-right-0">
+    <div class="alert alert-info context-message-div context-message-for-certificate">
+        <div class="context-wmic-info">
+            <i class="icons8-info message-dialog-wmic-icon"></i>
+        </div>
+        <div class="vertical-align-middle table-cell">
+            <p class="message-dialog-text message-dialog-int-view-text remove-bottom display-block">Adding or modifying the Operations is not possible because one or more deleted Integrations are present in the existing Operations.</p>
+        </div>
+    </div>
+</div>
+<div *ngIf="!isWsdlFirst && activeStage.getActiveStage().id === 'stage00' && allOperationAreResolved">
+    <div class="toolbar-div">
+        <div class="toolbar-div-buttons pull-right">
+            <button id="addRad" class="btn btn-primary-live "
+                (click)="openIntegrationTypeSelectorDialog()">Add New Operation</button>
+        </div>
+    </div>
+    <div class="toolbar-div">
+        <div class="toolbar-div-buttons border-top-bottom margin-left-0 margin-right-0i">
+            <button class="btn btn-secondary-live" (click)="showDeleteModal = true" [disabled]="operations?.length <= 1 || !selectedOpsName">Delete</button>
+        </div>
+    </div>
+</div>
+
+<!--  Table Begin -->
+<div class="padding-top-10">
+    <div class="fixed-table-container">
+        <div class="header-background"></div>
+        <div class="fixed-table-container-inner table-list-under-develop-link ng4-searchable-table" vertical-fluid
+            [pageSpecificPadding]="!isWsdlFirst ? 400 : 20 " [isRelativeToDocument]="false">
+            <table class="table-width-under-develop width-100-percentage">
+                <thead>
+                    <tr>
+                        <th class="table-right-border width-50-percentage">
+                            <div class="table-header-title width-50-percentage ">
+                                <label class="">Operation</label>
+                                <span id="nameFilter" class="pull-right"
+                                    (click)="showIntegrationSearchRow = !showIntegrationSearchRow">
+                                    <i class="icons8-filter  int-list-filter"></i>
+                                </span>
+                            </div>
+                        </th>
+                        <th class="table-right-border  width-50-percentage">
+                            <div class="table-header-title width-50-percentage">
+                                <label class="">Integration</label>
+                                <span id="nameFilter" class="pull-right"
+                                    (click)="showIntegrationSearchRow = !showIntegrationSearchRow">
+                                    <i class="icons8-filter  int-list-filter"></i>
+                                </span>
+                            </div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr id="searchRow" *ngIf="showIntegrationSearchRow">
+                        <td class="table-row-text table-left-border cursor-default">
+                            <div class="search-box-panel width-100-percentage padding-all-side-10">
+                                <input type="text" placeholder="Filter by Operation" [(ngModel)]="filterOperation"
+                                    id="search_keyword" name="search_keyword" class="form-control search-box-input"
+                                    select-input-text />
+                                <i class="icons8-search integration-searchbox-icon inline-block search-box-icon"></i>
+                                <span *ngIf="filterOperation"
+                                    class="icons8-delete-button position-relative rad-list-search-box-close"
+                                    id="filterByIntegrationName" (click)="filterOperation = ''"></span>
+                            </div>
+                        </td>
+                        <td class="table-row-text table-left-border cursor-default">
+                            <div class="search-box-panel width-100-percentage padding-all-side-10">
+                                <input type="text" placeholder="Filter by Integration" [(ngModel)]="filterIntegration"
+                                    id="search_keyword" name="search_keyword" class="form-control search-box-input"
+                                    select-input-text />
+                                <i class="icons8-search integration-searchbox-icon inline-block search-box-icon"></i>
+                                <span *ngIf="filterIntegration"
+                                    class="icons8-delete-button position-relative rad-list-search-box-close"
+                                    id="filterByIntegrationName" (click)="filterIntegration = ''"></span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr class="no-items-todisplay border-top">
+                        <td colspan="2">No Item To Display</td>
+                    </tr>
+                    <tr *ngFor="let intOpsMap of operations; let isOdd=odd; let isEven=even; let i = index"
+                        [class.odd]="isOdd"   [class.even]="isEven" (click)="selectedOps(intOpsMap);opsIndex = i"
+                        [class.active]="!isWsdlFirst && activeStage.getActiveStage().id === 'stage00' ? selectedOpsName === intOpsMap.operationName : false">
+                        <td class="table-row-text table-left-border cursor-default">
+                            {{ intOpsMap.operationName}}
+                        </td>
+                        <td class="table-row-text table-left-border cursor-default ">
+                            <span (click)="nodeAction(intOpsMap)" [ngClass]=" !isWsdlFirst && !intOpsMap?.resolved ? '' : 'link-underline wsd-integration-label link-button' " >
+                                <span class="ref-error-message" *ngIf="!intOpsMap?.resolved && !isWsdlFirst">{{intOpsMap?.serviceName?.split(":")[1]}} <i pTooltip="Integration does not exist"
+                                    tooltipPosition="top" class="icons8-warn wmic-warn-icon-color margin-left-5 vertical-align-middle"></i></span>
+                                <span *ngIf="isWsdlFirst || intOpsMap?.resolved">{{intOpsMap?.serviceName?.split(":")[1]}} </span>
+                                <div class="permission wsd-permissions pull-right" *ngIf="isWsdlFirst">
+                                    <button class="local-action-button" *ngIf="isaclMappingPermissionPresent"
+                                        (click)="openACLMappingDialog(intOpsMap?.serviceName?.split(':')[1] , $event)">
+                                        <i class="icons8-access-2 wmic-icon-font-size margin-right-5">
+                                        </i>Permissions</button>
+                                </div>
+                            </span>
+                        </td>
+                    </tr>
+                    <tr *ngIf="!operations" class="int-loader-div">
+                        <td colspan="2">
+                                <wmic-loader></wmic-loader>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<!--  Table Ends-->
+
+<p-dialog header="{{ documentTypeName }} Details" [(visible)]="showDocumentTypeModal" modal="modal" [responsive]="true"
+    [closable]="true" [draggable]="false" [resizable]="false" [width]="1500" [focusOnShow]="false" 
+    class="wsd-doctype-dialog" [appendTo]="'body'">
+    <div class="margin-top-20 margin-bottom-20">
+        <wmic-doctype-editor [editorData]="documentEditorsData"></wmic-doctype-editor>
+    </div>
+    <p-footer class="margin-top-20">
+        <div class="ui-dialog-buttonset">
+            <button class="btn btn-primary-live" (click)="showDocumentTypeModal = false"
+                autofocus>Close</button>
+        </div>
+    </p-footer>
+</p-dialog>
+
+<p-dialog header="Associate Access Control List With {{ selectedIntegration }}" [(visible)]="showACLModal" modal="modal"
+    [responsive]="true" [closable]="true" [draggable]="false" [resizable]="false" [width]="665" [focusOnShow]="false"
+    class="wsd-doctype-dialog" [appendTo]="'body'">
+    <div class="container-fluid map-acl" [style.height]="isaclMappingPermissionPresent ? '172px': '100px'">
+        <div>
+            <p class="font-size-12 padding-left-5">Execute Access Control List will be enforced only when the Integration is a top-level Integration.</p>
+        </div>
+        <div class="form-group padding-left-5"
+            *ngIf="!isaclMappingPermissionPresent || activeStage.getActiveStage()?.id !== 'stage00'">
+            <label
+                class="col-lg-5 col-md-5 col-sm-6 remove-paddings">Associated Execute Access Control List</label>
+            <label class="col-lg-6 col-md-5 col-sm-6 padding-left-20">{{associatedACLWithIntegration}}</label>
+        </div>
+        <div class="form-group padding-left-5"
+            *ngIf="isaclMappingPermissionPresent && activeStage.getActiveStage()?.id === 'stage00'">
+            <label
+                class="col-lg-5 col-md-5 col-sm-6 margin-top-10 remove-paddings">Execute Access Control List</label>
+            <div class="col-lg-6 col-md-5 col-sm-6 padding-left-20">
+                <wmic-autocomplete [items]="aclList" [selectedItem]="selectedAcl" [optionsDisplayFieldName]="'aclName'"
+                    (onSelect)="onAclSelect($event);" [isSearchEnable]="false" [autoCompleteValue]="'new-password'">
+                </wmic-autocomplete>
+            </div>
+        </div>
+    </div>
+    <p-footer class="margin-top-20">
+        <ng-container *ngIf="isaclMappingPermissionPresent && activeStage.getActiveStage()?.id === 'stage00'">
+            <button class="btn btn-secondary-live" (click)="closeAclModalWindow()">Cancel</button>
+            <button class="btn btn-primary-live margin-left-20" (click)="mapAclWithSwaggerFirstIntegration()"
+                [disabled]="associatedACLWithIntegration === selectedAcl" autofocus>Apply</button>
+        </ng-container>
+        <ng-container *ngIf="!isaclMappingPermissionPresent || activeStage.getActiveStage()?.id !== 'stage00'">
+            <button class="btn btn-primary-live" (click)="closeAclModalWindow()" autofocus>Ok</button>
+        </ng-container>
+    </p-footer>
+</p-dialog>
+
+<p-dialog header="Add New Operation" [(visible)]="showAddOperartionModal" modal="modal" [responsive]="true"
+    [closable]="true" [draggable]="false" [resizable]="false" [width]="900" [focusOnShow]="false"
+    class="wsd-doctype-dialog" [appendTo]="'body'">
+    <div class="wsd-ops-modal margin-top-20 margin-bottom-20">
+        <div class="form-group margin-top-20 margin-bottom-20">
+            <div class="col-lg-5 padding-top-5 padding-left-40 col-md-5 col-sm-6">
+                <wmic-label [labelName]="'NAME'" [isRequired]="true"></wmic-label>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-6">
+                <input class="form-control" type="text" name="name" [(ngModel)]="wsdOperationName"
+                    placeholder="Name your WSDL Operation" required maxlength="36" [class.highlight]="operationValidationMessage" (ngModelChange)="validateOperationName()" autofocus autocomplete="off" />
+                <div class="validate-msg-cont" *ngIf="operationValidationMessage">
+                    <p>{{ operationValidationMessage }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="form-group margin-bottom-20">
+            <div class="col-lg-5 padding-top-5 padding-left-40 col-md-5 col-sm-6">
+                <wmic-label [labelName]="'Select Integration'" [isRequired]="true">
+                </wmic-label>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-6">
+                <!-- <wmic-autocomplete [items]="integrations" [placeholderText]="'SELECT-OR-TYPE' | translate"
+                    [optionsValueFieldName]="'name'" (onSelect)="onIntegrationSelect($event);"
+                    [optionsDisplayFieldName]="'name'" [isSearchFieldMandatory]="true" [isSearchEnable]="true"
+                    [name]="'name'" [selectedItem]="selectedIntegration" (onFocusOut)="onIntegrationFieldBlur($event)" [tabIndex]="103" [autoCompleteValue]="'off'">
+                </wmic-autocomplete> -->
+            </div>
+        </div>
+    </div>
+    <p-footer class="margin-top-20">
+        <div class="ui-dialog-buttonset">
+            <button class="btn btn-secondary-live"
+                (click)="showAddOperartionModal = false">Cancel</button>
+            <button class="btn btn-primary-live" (click)="addWsdOperationToList()" [disabled]="isAddOperationButtonDisaled()">Add</button>
+        </div>
+    </p-footer>
+</p-dialog>
+
+<p-dialog header="Delete SOAP Operation" [(visible)]="showDeleteModal" modal="modal" [responsive]="true" [closable]="true"
+    [draggable]="false" [resizable]="false" [width]="350" [focusOnShow]="false" class="wsd-doctype-dialog" [appendTo]="'body'">
+    <div class="container-fluid margin-bottom-30">
+        <div class="container-fluid delete-confirm-margin delete-acl-list-modal">
+            <i class="icons8-exclamation-mark confirm-message-dialog-wmic-icon"></i>
+            <p class="padding-exclamation-sign ui-dialog-text" [innerHTML]="'will be permanently deleted and cannot be recovered.'"></p>
+            <p class="padding-exclamation-sign ui-dialog-text margin-top-10 margin-bottom-10">Do you want to delete</p>
+        </div>
+    </div>
+    <p-footer class="margin-top-20">
+        <div class="ui-dialog-buttonset">
+            <button class="btn btn-secondary-live" (click)="deleteWsdOperation();showDeleteModal = false">Delete</button>
+            <button class="btn btn-primary-live" (click)="showDeleteModal = false" autofocus>Cancel</button>
+        </div>
+    </p-footer>
+</p-dialog>

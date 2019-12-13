@@ -1,0 +1,25 @@
+<div class="row remove-row-margins form-horizontal">
+    <div *ngIf="!wsdlXml" class="col-12 margin-top-10 padding-left-0 padding-right-0">
+        <div class="alert alert-info context-message-div context-message-for-certificate">
+            <div class="context-wmic-info">
+                <i class="icons8-info message-dialog-wmic-icon"></i>
+            </div>
+            <div class="vertical-align-middle table-cell">
+                <p class="message-dialog-text message-dialog-int-view-text remove-bottom display-block">The WSDL cannot be
+                    loaded because one or more deleted Integrations are present in the existing Operations.</p>
+            </div>
+        </div>
+    </div>
+    <div class="toolbar-div remove-row-margins">
+        <div class="toolbar-div-buttons pull-left margin-left-0 btn-group">
+            <div *ngIf="wsdlXml">
+                <button class="btn btn-secondary-live  pull-left" (click)="downloadSwagger()">Download WSDL</button>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="wsdlXml" class="col-lg-12 col-md-12 col-sm-12 display-flex remove-paddings wsdl-ace-editor">
+        <div vertical-fluid [pageSpecificPadding]="290" [isRelativeToDocument]="false" setHeight="true" ace-editor
+            [mode]="'xml'" [theme]="'eclipse'" [readOnly]="true" [options]="editorOptions" [(text)]="wsdlXml"
+            style="width:100%; overflow: auto;"></div>
+    </div>
+</div>

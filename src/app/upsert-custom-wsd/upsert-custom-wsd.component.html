@@ -1,0 +1,147 @@
+<div class="document-Type global-page-header">
+    <!-- <wmic-breadcrumb [linkUrl]="linkUrl" [linkText]="linkText" [isAngularJsRoute]="true"></wmic-breadcrumb> -->
+    <form name="addWsdForm" role="form" (ngSubmit)="submitWsdForm()" autocomplete="off" #addWsdForm="ngForm">
+        <div class="panel_box margin-top-64">
+            <h2 class="padding-left-20" *ngIf="mode === 'add'">New SOAP API
+                <!-- <wmic-open-help [helpFile]="'IL_RADsScrn.html'"></wmic-open-help> -->
+            </h2>
+            <h2 class="padding-left-20" *ngIf="mode === 'edit'">{{ wsdName }}
+                <!-- <wmic-open-help [helpFile]="'IL_RADsScrn.html'"></wmic-open-help> -->
+            </h2>
+            <h3 class="margin-top-5 padding-left-20">Build a SOAP API from scratch</h3>
+            <div class="form-group margin-top-10 margin-bottom-0">
+                <div class="col-lg-5 padding-top-5 padding-left-40 col-md-5 col-sm-6">
+                    <app-label [labelName]="'Name'" [isRequired]="'true'"></app-label>
+                </div>
+                <div class="col-lg-5 col-md-5 col-sm-6">
+                    <input *ngIf="mode === 'add'" class="form-control" type="text" name="name" [(ngModel)]="wsdName"
+                        placeholder="Name your SOAP API" required #name="ngModel" validate-name 
+                        (onValidateName)="validateName($event)"
+                        (focus)="validationMessageOfWsdName = null" maxlength="36"
+                        [class.highlight]="validationMessageOfWsdName" />
+                    <div class="validate-msg-cont" *ngIf="validationMessageOfWsdName">
+                        <p>{{validationMessageOfWsdName}}</p>
+                    </div>
+                    <label *ngIf="mode === 'edit'" class="ellipsis-text">{{wsdName}}</label>
+                </div>
+            </div>
+            <div class="form-group margin-top-10 margin-bottom-0" *ngIf="mode === 'add'">
+                <div class="col-lg-5 padding-top-5 padding-left-40 col-md-5 col-sm-6">
+                    <app-label [labelName]="'SOAP Version'" [isRequired]="'true'"></app-label>
+                    <!-- <wmic-help-popover class="wmic-help pointer-cursor wmic-icon-font-size padding-left-5" [documentFile]="documentFile"
+                        [iconClass]="'wmic-icon-font-size'" [labelContent]="'SOAP Version'" popoverObjectWidth="480px" popoverObjectHeight="410px"
+                        popoverTextFrom="htmlAsAPart" popoverPosition="top">
+                    </wmic-help-popover> -->
+                </div>
+                <div class="col-lg-5 col-md-5 col-sm-6">
+                    <div>
+                        <input class="align-checkbox" name="soapVersion" type="radio"
+                            [checked]=" soapVersion === 'soap11' ? true : false" (click)="setSoapVersion('soap11')">
+                        <label class="padding-left-5">SOAP 1.1</label>
+                    </div>
+                    <div>
+                        <input class="align-checkbox padding-left-20" name="soapVersion" type="radio"
+                            [checked]="soapVersion === 'soap12' ? true : false" (click)="setSoapVersion('soap12')">
+                        <label class="padding-left-5">SOAP 1.2</label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group margin-top-20 margin-bottom-20" *ngIf="mode === 'add'">
+                <div class="col-lg-5 padding-top-5 padding-left-40 col-md-5 col-sm-6">
+                    <app-label [labelName]="'Select Integration'" [isRequired]="'true'">
+                    </app-label>
+                    <!-- <wmic-help-popover class="wmic-help pointer-cursor wmic-icon-font-size padding-left-5" [documentFile]="documentFile"
+                        [iconClass]="'wmic-icon-font-size'" [labelContent]="'Select Integration'" popoverObjectWidth="480px" popoverObjectHeight="410px"
+                        popoverTextFrom="htmlAsAPart" popoverPosition="top">
+                    </wmic-help-popover> -->
+                </div>
+                <div class="col-lg-5 col-md-5 col-sm-6">
+                        <select class="custom-select"  [(ngModel)]="integrationname" (change)="onIntegrationSelect($event)" name="integration">
+                                <option value="">Select Integration</option>
+                                <option *ngFor="let integration of integrations" [ngValue]="integration.name">{{integration.name}}</option>
+                        </select>
+                    <!-- <wmic-autocomplete [items]="integrations" [placeholderText]="'Select or Type'"
+                        [optionsValueFieldName]="'name'" (onSelect)="onIntegrationSelect($event);"
+                        [optionsDisplayFieldName]="'name'" [isSearchFieldMandatory]="true" [isSearchEnable]="true"
+                        [name]="'name'" [selectedItem]="selectedIntegration" [tabIndex]="103" (onFocusOut)="onIntegrationFieldBlur($event)"
+                        [autoCompleteValue]="'off'">
+                    </wmic-autocomplete> -->
+                </div>
+            </div>
+            <div class="form-group margin-top-10 margin-bottom-0">
+                <div class="col-lg-5 padding-top-5 padding-left-40 col-md-5 col-sm-6">
+                    <app-label [labelName]="'Use and style for operations'" [isRequired]="'true'"></app-label>
+                    <!-- <wmic-help-popover class="wmic-help pointer-cursor wmic-icon-font-size padding-left-5" [documentFile]="documentFile"
+                        [iconClass]="'wmic-icon-font-size'" [labelContent]="'Use and style for operations'" popoverObjectWidth="480px" popoverObjectHeight="410px"
+                        popoverTextFrom="htmlAsAPart" popoverPosition="top">
+                    </wmic-help-popover> -->
+                </div>
+                <div class="col-lg-5 col-md-5 col-sm-6">
+                    <div>
+                        <input class="align-checkbox" name="bindingUseAndStyle" type="radio"
+                            [checked]=" bindingUseAndStyle === 'document-literal' ? true : false"
+                            (click)="setBinding('document-literal', 'literal', 'document')">
+                        <label class="padding-left-5">Document - Literal</label>
+                    </div>
+                    <div>
+                        <input class="align-checkbox padding-left-20" name="bindingUseAndStyle" type="radio"
+                            [checked]="bindingUseAndStyle === 'rpc-literal' ? true : false"
+                            (click)="setBinding('rpc-literal', 'literal', 'rpc')">
+                        <label class="padding-left-5">RPC - Literal</label>
+                    </div>
+                    <div>
+                        <input class="align-checkbox padding-left-20" name="bindingUseAndStyle" type="radio"
+                            [checked]="bindingUseAndStyle === 'rpc-encoded' ? true : false"
+                            (click)="setBinding('rpc-encoded', 'encoded', 'rpc')">
+                        <label class="padding-left-5">RPC - Encoded</label>
+                    </div>
+                </div>
+            </div>
+            <!-- <div class="form-group margin-top-10 margin-bottom-0" *ngIf="mode === 'add'">
+                    <label class="col-lg-5 padding-left-40 col-md-5 col-sm-6">
+                        <app-label [labelName]="'Content model compliance'" [isRequired]="false"></app-label>
+                    </label>
+                    <div class="col-lg-5 col-md-5 col-sm-6">
+                        <wmic-autocomplete [items]="complianceType" [optionsDisplayFieldName]="'name'"
+                            (onSelect)="selectComplianceType($event)" [selectedItem]="selectedComplianceType"
+                            [isSearchEnable]="false"></wmic-autocomplete>
+                    </div>
+            </div> -->
+            <div class="form-group margin-top-20 ">
+                <div class="offset-lg-5 offset-md-5 padding-left-15">
+                    <input class="align-checkbox" name="wsiCompliance" type="checkbox" [checked]="wsiCompliance"
+                        (click)="toggleWsiCompliance()">
+                    <label class="padding-left-5">Enforce WS-I Basic Profile 1.1 compliance</label>
+                    <!-- <wmic-help-popover class="wmic-help pointer-cursor wmic-icon-font-size padding-left-5" [documentFile]="documentFile"
+                        [iconClass]="'wmic-icon-font-size'" [labelContent]="'Enforce WS-I Basic Profile 1.1 compliance'" popoverObjectWidth="480px" popoverObjectHeight="410px"
+                        popoverTextFrom="htmlAsAPart" popoverPosition="right">
+                    </wmic-help-popover> -->
+                </div>
+            </div>
+            <div *ngIf="mode === 'add'" class="form-group" [ngClass]=" mode === 'add' ? 'margin-bottom-20' : 'margin-bottom-5'">
+                <div class="offset-lg-5 offset-md-5 padding-left-15">
+                    <input class="align-checkbox" name="xercesValidation" type="checkbox" [checked]="xercesValidation"
+                        (click)="toggleXercesValidation()">
+                    <label class="padding-left-5">Validate schema using Xerces</label>
+                </div>
+            </div>
+            <div class="form-group margin-bottom-20" *ngIf="mode === 'edit'">
+                <div class="offset-lg-5 offset-md-5 padding-left-15">
+                    <input class="align-checkbox" name="attachmentEnabled" [checked]="attachmentEnabled"
+                        (click)="toggleAttachmentEnabled()" type="checkbox">
+                    <label class="padding-left-5">Attachment Enabled</label>
+                    <!-- <wmic-help-popover class="wmic-help pointer-cursor wmic-icon-font-size padding-left-5" [documentFile]="documentFile"
+                        [iconClass]="'wmic-icon-font-size'" [labelContent]="'Attachment Enabled'" popoverObjectWidth="480px" popoverObjectHeight="410px"
+                        popoverTextFrom="htmlAsAPart" popoverPosition="right">
+                    </wmic-help-popover> -->
+                </div>
+            </div>
+        </div>
+        <div class="btnPanel margin-top-15">
+            <button type="submit" class="save-button btn btn-primary-live pull-right margin-left-20" tabindex="105"
+                [disabled]="isSaveButtonEnabled()" #saveButton>Save</button>
+            <button class="btn btn-secondary-live pull-right" type="button" (click)="navigateToWsdlList()"
+                tabindex="106">Cancel</button>
+        </div>
+    </form>
+</div>

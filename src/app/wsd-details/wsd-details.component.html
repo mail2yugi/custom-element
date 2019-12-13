@@ -1,0 +1,27 @@
+<div class="document-Type global-page-header">
+    <!-- <wmic-breadcrumb [linkUrl]="linkUrl" [linkText]="'SOAP APIs'" [isAngularJsRoute]="true"></wmic-breadcrumb> -->
+    <div
+        class="panel_box_plain col-lg-12 col-md-12 col-sm-12 col-xs-12 remove-top-and-bottom-padding panel-box-top-positon-without-banner">
+        <h2 class="margin-left-5 margin-bottom-0">{{this.wsdName}}
+            <!-- <wmic-open-help [helpFile]="'IL_RADsScrn.html'"></wmic-open-help> -->
+        </h2>
+        <p-tabView class="ilive-tabset tab_overview" active="true"  (onChange)="setActiveTabIndex($event)" [activeIndex]="activeTab">
+            <p-tabPanel header="OVERVIEW" select="true">
+                <app-wsd-overview [wsdDetails]="wsdDetails"></app-wsd-overview>
+            </p-tabPanel>
+            <p-tabPanel header="OPERATIONS">
+                <app-wsd-operation 
+                        [setOperation]="wsdOperations" 
+                        [isWsdlFirst]="isWsdlFirst" 
+                        [wsdName]="wsdName"
+                        [projectName]="projectName"
+                        [csrf]="csrf"
+                        (onOperationChange)="getModifiedOperations()">
+                </app-wsd-operation>
+            </p-tabPanel>
+            <p-tabPanel header="WSDL">
+                <app-wsd-wsdl-ui [wsdlXml]="wsdlXml" [wsdName]="wsdName"></app-wsd-wsdl-ui>
+            </p-tabPanel>
+        </p-tabView>
+    </div>
+</div>

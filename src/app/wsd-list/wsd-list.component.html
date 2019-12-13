@@ -1,0 +1,322 @@
+<div>
+    <app-message-dialog></app-message-dialog>
+    <!-- <app-modal *ngIf="showCopyModal" [title]="'Copy Rad'" [dialogWidth]="600" [customClass]="'copy-dialog'">
+        <div class="container-fluid" modal-body>
+            <div class="margin-top-20">
+                <div class="form-group row">
+                    <label class="col-4">
+                        <app-label [labelName]="'Select Project'" [isRequired]=true></app-label>
+                    </label>
+                    <div class="col-8">
+                        <app-autocomplete [items]="projectList" [optionsValueFieldName]="'name'" [name]="'projects'"
+                            [optionsDisplayFieldName]="'alias'" [selectedItem]="selectedProjectAlias" [isSearchEnable]="true"
+                            [autoCompleteValue]="'off'" (onSelect)="onProjectSelect($event);">
+                        </app-autocomplete>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-4">
+                        <app-label [labelName]="Copy As" [isRequired]=true></app-label>
+                    </label>
+                    <div class="col-8">
+                        <input #wsdCopyNameInput id="wsdCopyName" name="wsdCopyName" class="form-control" maxlength="50" [(ngModel)]="wsdCopyName" [value]="" type="text"
+                            autocomplete="off" required [class.highlight]="validationNameMessage.length > 0" validate-name [assetName]="wsdCopyName"
+                            [assetType]="'SOAPAPI'" [projectName]="selectedProject" (onValidateName)="validateName($event)" (onFocusInput)="disableCopyButton($event)" placeholder="Name your soap API"
+                            autofocus/>
+                        <div class="validate-msg-cont" *ngIf="validationNameMessage.length > 0">
+                            <p>{{validationNameMessage}}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row container-fluid delete-confirm-margin">
+                    <i class="icons8-exclamation-mark warning confirm-message-dialog-wmic-icon"></i>
+                    <p class="padding-exclamation-sign ui-dialog-text margin-top-10 margin-bottom-10">Warning message for copy across projects</p>
+                </div>
+            </div>
+        </div>
+        <div class="ui-dialog-buttonset" modal-footer>
+            <button class="btn btn-secondary-live" (click)="closeModalWindow()" >Cancel</button>
+            <button class="btn btn-primary-live" (click)="copySelectedWsd()" [disabled]="isCopyButtonDisabled == true" autofocus>Copy</button>
+        </div>
+    </app-modal> -->
+    <div class="panel_box panel-box-top-positon-with-banner">
+        <div class="toolbar-div">
+            <div *ngIf="activeStage === 'stage00'" class="toolbar-div-buttons pull-left">
+                <button id="editWsd"  class="btn btn-primary-live" [disabled]="!selectedWsdName" (click)="editWsd()">Edit</button>
+                <button id="deleteWsd" class="btn btn-secondary-live margin-left-20" [disabled]="!selectedWsdName" (click)="deleteWsd()">Delete</button>
+                <button id="copyWsd"  class="btn btn-secondary-live margin-left-20" [disabled]="!selectedWsdName" (click)="openCopyWsdModal()">Copy</button>
+            </div>
+            <div  *ngIf="activeStage !== 'stage00'" class="toolbar-div-buttons pull-left">
+                <button id="deleteRad" class="btn btn-secondary-live"
+                [disabled]="!selectedWsdName"  (click)="deleteWsd()">Delete</button>
+                <div class="padding-left-20 padding-top-20">
+                    <div [innerHtml]="deployLinkHtml"></div>
+                </div>
+            </div>
+            <div *ngIf="activeStage === 'stage00'" class="toolbar-div-buttons pull-right margin-top-97">
+                <button id="addWsd" class="btn btn-primary-live margin-left-20"
+                    (click)="addNew()">Add New SOAP API</button>
+            </div>
+        </div>
+        <div class="total-asset">
+            <p>SOAP APIs
+                <span>: {{filterCount}}</span>
+            </p>
+        </div>
+
+        <div class="table-padding">
+            <div class="fixed-table-container">
+                <div class="header-background"></div>
+                <div class="fixed-table-container-inner table-list-under-develop-link radsTable ng4-searchable-table">
+                    <table class="table-width-under-develop width-100-percentage">
+                        <thead>
+                            <tr>
+                                <!-- <th class="table-right-border width-3-percentage min-width-50" *ngIf="isTenantCapableForExportImport">
+                                    <div class="table-header-title  width-3-percentage padding-left-20">
+                                        <input type="checkbox" id="selectAllRads" [checked]="isAllChecked()" (change)="toggleSelectAll($event)" [disabled]="radList?.length == 0">
+                                    </div>
+                                </th> -->
+                                <th class="table-right-border  width-17-percentage">
+                                    <div class="table-header-title  width-17-percentage">
+                                        <label class="width-55-percentage m-pull-top-point-7">Name</label>
+                                        <span id="nameFilter" (click)="toggleSearchRow()">
+                                            <i class="icons8-filter  int-list-filter"></i>
+                                        </span>
+                                    </div>
+                                </th>
+                                <th class="table-right-border width-10-percentage">
+                                    <div class="table-header-title width-10-percentage">
+                                        <label class="m-pull-top-point-7 text-center">Type</label>
+                                        <span id="typeFilter" (click)="toggleSearchRow()">
+                                            <i class="icons8-filter int-list-filter"></i>
+                                        </span>
+                                    </div>
+                                </th>
+                                <th class="table-right-border width-20-percentage">
+                                    <div class="table-header-title width-20-percentage">
+                                        <label class="width-55-percentage m-pull-top-point-7">Modified on</label>
+                                        <span id="modifiedOnFilter" (click)="toggleSearchRow()">
+                                            <i class="icons8-filter int-list-filter"></i>
+                                        </span>
+                                    </div>
+                                </th>
+                                <th class="table-right-border width-16-percentage">
+                                    <div class="table-header-title width-16-percentage">
+                                        <label class="width-55-percentage m-pull-top-point-7">Modified by</label>
+                                        <span id="modifiedByFilter" (click)="toggleSearchRow()">
+                                            <i class="icons8-filter int-list-filter"></i>
+                                        </span>
+                                    </div>
+                                </th>
+                                <th class="table-right-border width-20-percentage">
+                                    <div class="table-header-title width-20-percentage">
+                                        <label class="width-55-percentage m-pull-top-point-7">Created on</label>
+                                        <span id="createdOnFilter" (click)="toggleSearchRow()">
+                                            <i class="icons8-filter int-list-filter"></i>
+                                        </span>
+                                    </div>
+                                </th>
+                                <th class="table-right-border width-16-percentage">
+                                    <div class="table-header-title width-16-percentage">
+                                        <label class="width-55-percentage m-pull-top-point-7">Created by</label>
+                                        <span id="createdByFilter" (click)="toggleSearchRow()">
+                                            <i class="icons8-filter int-list-filter"></i>
+                                        </span>
+                                    </div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr id="searchRow" *ngIf="showSearchRow == true">
+                                <!-- <th class="table-right-border width-3-percentage" *ngIf="isTenantCapableForExportImport">&nbsp; </th> -->
+                                <td class="width-17-percentage padding-all-side-15">
+                                    <div class="search-box-panel width-100-percentage">
+                                        <input type="text" placeholder="Filter by name" [(ngModel)]="filterWsdFields.wsdName" id="searchName" class="form-control search-box-input"
+                                            select-input-text />
+                                        <i class="icons8-search inline-block search-box-icon"></i>
+                                        <span *ngIf="filterWsdFields.wsdName" class="icons8-delete-button position-relative rad-list-search-box-close" id="filterByName"
+                                            (click)="filterWsdFields.wsdName = ''"></span>
+                                    </div>
+                                </td>
+                                <td class="width-10-percentage padding-all-side-15 table-left-border">
+                                    <div class="margin-left-2n">
+                                        <label for="fromWsdl">
+                                            <input id="fromWsdl" type="checkbox" [(ngModel)]="fromWsdl"/>
+                                            <img pTooltip="Swagger" tooltipPosition="right" src="" class="pointer-cursor">
+                                        </label>
+                                    </div>
+                                    <div class="margin-left-2n">
+                                        <label for="fromScratchType">
+                                            <input id="fromScratchType" class="margin-top-10i" type="checkbox" [(ngModel)]="fromScratchType" />
+                                            <img pTooltip="From scratch" tooltipPosition="right" src="" class="pointer-cursor">
+                                        </label>
+                                    </div>
+                                </td>
+                                <td class="width-20-percentage table-left-border padding-all-side-15">
+                                    <div class="row">
+                                        <div class="col-lg-6 col-md-10 col-sm-10 col-xs-10">
+                                            <div class="input-group">
+                                                <!-- <p-calendar [(ngModel)]="searchByModifiedStartDate" placeholder="Start date..." [maxDate]="today"
+                                                    [icon]="'icons8-date wmic-icon-font-size'" showIcon="true" showButtonBar="true"
+                                                    readonlyInput="true" (onSelect)="onDateSelect(searchByModifiedStartDate, searchByModifiedEndDate, 'modifiedOn');"
+                                                    [inputStyleClass]="'form-control'" clearButtonStyleClass="'local-action-button'"
+                                                    todayButtonStyleClass="display-none" selectOtherMonths="true" [appendTo]="'body'"></p-calendar> -->
+
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-10 col-sm-10 col-xs-10">
+                                            <div class="input-group">
+                                                <!-- <p-calendar [(ngModel)]="searchByModifiedEndDate" placeholder="End date..." [maxDate]="today" showButtonBar="true"
+                                                    [icon]="'icons8-date wmic-icon-font-size'" showIcon="true" readonlyInput="true"
+                                                    (onSelect)="onDateSelect(searchByModifiedStartDate, searchByModifiedEndDate, 'modifiedOn');"
+                                                    [inputStyleClass]="'form-control'" clearButtonStyleClass="'local-action-button'"
+                                                    todayButtonStyleClass="display-none" [selectOtherMonths]="true" [appendTo]="'body'"></p-calendar> -->
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="validate-date-msg">
+                                        <span *ngIf="!isModifiedSearchDateRangeValid && searchByModifiedEndDate && searchByModifiedStartDate ">{{validationMessage}}</span>
+                                    </div>
+                                </td>
+                                <td class="width-16-percentage padding-all-side-15 table-left-border">
+                                    <div class="search-box-panel width-100-percentage">
+                                        <input type="text" placeholder="Filter by User..." [(ngModel)]="filterWsdFields.modifiedBy" id="searchUser" class="form-control search-box-input"
+                                            select-input-text />
+                                        <i class="icons8-search inline-block search-box-icon"></i>
+                                        <span *ngIf="filterWsdFields.modifiedBy" class="icons8-delete-button position-relative rad-list-search-box-close" id="filterByUser"
+                                            (click)="filterWsdFields.modifiedBy = ''"></span>
+                                    </div>
+                                </td>
+                                <td class="width-20-percentage table-left-border padding-all-side-15" >
+                                    <div class="row">
+                                        <div class="col-lg-6 col-md-10 col-sm-10 col-xs-10">
+                                            <div class="input-group">
+                                                <!-- <p-calendar [(ngModel)]="searchByCreatedStartDate" placeholder="Start date..." [maxDate]="today"
+                                                    [icon]="'icons8-date wmic-icon-font-size'" showIcon="true" showButtonBar="true"
+                                                    readonlyInput="true" (onSelect)="onDateSelect(searchByCreatedStartDate, searchByCreatedEndDate, 'createdOn');"
+                                                    [inputStyleClass]="'form-control'" [clearButtonStyleClass]="'local-action-button'"
+                                                    todayButtonStyleClass="display-none" [appendTo]="'body'"></p-calendar> -->
+
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-10 col-sm-10 col-xs-10">
+                                            <div class="input-group">
+                                                <!-- <p-calendar [(ngModel)]="searchByCreatedEndDate" placeholder="End date..." [maxDate]="today" showButtonBar="true"
+                                                    [icon]="'icons8-date wmic-icon-font-size'" showIcon="true" readonlyInput="true"
+                                                    (onSelect)="onDateSelect(searchByCreatedStartDate, searchByCreatedEndDate, 'createdOn');"
+                                                    [inputStyleClass]="'form-control'" [clearButtonStyleClass]="'local-action-button'"
+                                                    [selectOtherMonths]="true" todayButtonStyleClass="display-none" [appendTo]="'body'"></p-calendar> -->
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="validate-date-msg">
+                                        <span *ngIf="!isCreatedSearchDateRangeValid && searchByCreatedStartDate && searchByCreatedEndDate">{{validationMessage}}</span>
+                                    </div>
+                                </td>
+                                <td class="width-16-percentage padding-all-side-15 table-left-border">
+                                    <div class="search-box-panel width-100-percentage">
+                                        <input type="text" placeholder="Filter by User..." [(ngModel)]="filterWsdFields.createdBy" id="searchCreatedUser" class="form-control search-box-input"
+                                            select-input-text />
+                                        <i class="icons8-search inline-block search-box-icon"></i>
+                                        <span *ngIf="filterWsdFields.createdBy" class="icons8-delete-button position-relative rad-list-search-box-close" id="filterByCreatedUser"
+                                            (click)="filterWsdFields.createdBy = ''"></span>
+                                    </div>
+                                </td>                              
+                            </tr>
+                            <tr class="no-items-todisplay border-top">
+                                <td colspan="6">No items to display.</td>
+                            </tr>
+                            <tr *ngFor="let wsd of wsdList ; let rowIndex = index; let isOdd=odd; let isEven=even; let isActive=selected"
+                                id="wsd_{{wsd.wsdName}}" [class.odd]="isOdd" [class.even]="isEven" (click)="onWsdSelect(wsd)" [class.active]='wsd.wsdName === selectedWsdName'>
+                                <!-- <td class="table-row-text width-3-percentage padding-left-20" *ngIf="isTenantCapableForExportImport">
+                                    <input type="checkbox" class="rowcheck" id="rad_{{rad.radName}}_{{i}}" [(ngModel)]="rad.isSelected">
+                                </td> -->
+                                <td class="table-row-text width-17-percentage table-left-border">
+                                    <a class="break-word link-underline" (click)="navigateToViewPage(wsd.wsdName)">{{wsd.wsdName}}</a>
+                                </td>
+                                <td class="table-row-text width-10-percentage table-left-border">
+                                    <div *ngIf="wsd?.isWSDLFirst">
+                                        <div>
+                                            <img title="From WSDL" src="" class="pointer-cursor">
+                                        </div>
+                                    </div>
+                                    <div  *ngIf="!wsd?.isWSDLFirst">
+                                        <img title="From Scratch" src="" class="pointer-cursor">
+                                    </div>
+                                </td>
+                                <td class="table-row-text width-20-percentage table-left-border">
+                                    <div class="margin-top-4">{{wsd.revisionData.lastModifiedDate}}</div>
+                                </td>
+                                <td class="table-row-text width-16-percentage table-left-border">
+                                    <div class="margin-top-4"><a class="break-word link-underline" (click)="navigateToUserInfoPage(wsd?.revisionData?.lastModifiedByUserId)">{{ wsd?.revisionData?.lastModifiedBy}}</a></div>
+                                    <!-- <a *ngIf="!activeStage.isUserDeleted(rad.revisionData.lastModifiedByUserId)" class="inline-block max-width-100-per margin-top-4"
+                                        (click)="navigateToModifiedByUserProfile(rad)" href="#/Settings/Users/Info/{{rad.revisionData.lastModifiedByUserId}}">{{ rad.revisionData.lastModifiedBy}}</a> -->
+                                </td>
+                                <td class="table-row-text width-20-percentage table-left-border">
+                                    <div class="margin-top-4">{{wsd.revisionData.createdDate}}</div>
+                                </td>
+                                <td class="table-row-text width-16-percentage table-left-border">
+                                    <div class="margin-top-4"><a class="break-word link-underline" (click)="navigateToUserInfoPage(wsd?.revisionData?.createdByUserId)">{{ wsd?.revisionData?.createdBy}}</a></div>
+                                    <!-- <a *ngIf="!activeStage.isUserDeleted(rad.revisionData.lastModifiedByUserId)" class="inline-block max-width-100-per margin-top-4"
+                                        (click)="navigateToModifiedByUserProfile(rad)" href="#/Settings/Users/Info/{{rad.revisionData.lastModifiedByUserId}}">{{ rad.revisionData.lastModifiedBy}}</a> -->
+                                </td>
+                            </tr>
+                            <!-- <tr *ngIf="wsdList == undefined" class="int-loader-div">
+                                <td colspan="5">
+                                        <wmic-loader></wmic-loader>
+                                </td>
+                            </tr> -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- <p-dialog header="Add New SOAP API" [(visible)]="showChooseWSDTypeModal" modal="modal" [responsive]="true" [closable]="true"
+    [draggable]="false" [resizable]="false" [width]="600" [focusOnShow]="false" [appendTo]="'body'">
+    <div class="container-fluid margin-bottom-30">
+        <div class="panel-wiz col-6 integration-first-rad-type margin-top-20 inline-block" [class.selected-integration-first-rad-type]="integrationFirst == true">
+            <div class="radio wiz-select margin-top-10" (click)="selectIntegrationFirst()">
+                <label for="integrationFirst" class="font-weight-normal pointer-cursor">
+                    <input class="step2-radio-vertical-alignment margin-top-4" id="integrationFirst" name="wsd-approach-type" type="radio" [checked]="integrationFirst == true"
+                    />&nbsp;Build from scratch
+                </label>
+            </div>
+        </div>
+        <div class="panel-wiz col-6 wsdl-first-wsd-type margin-top-20 margin-bottom-20 pull-right inline-block" [class.selected-wsdl-first-wsd-type]="wsdlFirst == true">
+            <div class="radio wiz-select  margin-top-10" (click)="selectWsdlFist()">
+                <label for="wsdlFirst" class="font-weight-normal pointer-cursor">
+                    <input class="step2-radio-vertical-alignment margin-top-4" id="wsdlFirst" name="wsd-approach-type" type="radio" [checked]="wsdlFirst == true"
+                    />&nbsp;Build with WSDL
+                </label>
+            </div>
+        </div>
+    </div>
+    <p-footer class="margin-top-20">
+        <div class="ui-dialog-buttonset">
+            <button class="btn btn-secondary-live" (click)="showChooseWSDTypeModal = false" >Cancel</button>
+            <button class="btn btn-primary-live" (click)="navigateToUpsertWsd()" autofocus>Ok</button>
+        </div>
+    </p-footer>
+</p-dialog>
+
+<p-dialog header="Delete SOAP API" [(visible)]="showDeleteModal" modal="modal" [responsive]="true" [closable]="true"
+    [draggable]="false" [resizable]="false" [width]="350" [focusOnShow]="false" [appendTo]="'body'">
+    <div class="container-fluid margin-bottom-30">
+        <div class="container-fluid delete-confirm-margin delete-acl-list-modal">
+            <i class="icons8-exclamation-mark confirm-message-dialog-wmic-icon"></i>
+            <p class="padding-exclamation-sign ui-dialog-text"></p>
+            <p class="padding-exclamation-sign ui-dialog-text margin-top-10 margin-bottom-10">Do you want to delete?</p>
+        </div>
+    </div>
+    <p-footer class="margin-top-20">
+        <div class="ui-dialog-buttonset">
+            <button class="btn btn-secondary-live" (click)="deleteWsd();showDeleteModal = false">Delete</button>
+            <button class="btn btn-primary-live" (click)="showDeleteModal = false" autofocus>Cancel</button>
+        </div>
+    </p-footer>
+</p-dialog> -->

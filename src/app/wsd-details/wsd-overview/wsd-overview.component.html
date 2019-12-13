@@ -1,0 +1,77 @@
+<ng-container *ngIf="activeStage.getActiveStage().id === 'stage00'">
+    <button class="btn btn-primary-live pull-right " (click)="editWsdOverview()">Edit</button>
+</ng-container>
+<form class="form-horizontal margin-top-4 padding-top-35">
+    <div class="form-group">
+        <label for="radName"
+            class="col-lg-5 col-lg-offset-1 col-md-5 col-md-offset-1 col-sm-6">Name</label>
+        <label class="col-lg-5 col-md-5 col-sm-6 title-h4-normal" id="radName">{{wsdDetails?.node_nsName.split(":")[1]}}</label>
+    </div>
+    <div class="form-group">
+        <label for="createdBy"
+            class="col-lg-5 col-lg-offset-1 col-md-5 col-md-offset-1 col-sm-6">Created By</label>
+        <label *ngIf="activeStage.isUserDeleted(wsdDetails?.node_hints.revisionData.createdByUserId)"
+            class="col-lg-5 col-md-5 col-sm-6 title-h4-normal"
+            id="createdBy">{{wsdDetails?.node_hints.revisionData.createdBy}}</label>
+        <a *ngIf="!activeStage.isUserDeleted(wsdDetails?.node_hints.revisionData.createdByUserId)"
+            class="col-lg-5 col-md-5 col-sm-6 margin-top-4" (click)="navigateToCreatedByUserProfile()"
+            href="#/Settings/Users/Info/{{wsdDetails?.node_hints.revisionData.createdByUserId}}">{{wsdDetails?.node_hints.revisionData.createdBy}}</a>
+    </div>
+    <div class="form-group">
+        <label for="createdOn"
+            class="col-lg-5 col-lg-offset-1 col-md-5 col-md-offset-1 col-sm-6">Created On</label>
+        <label class="col-lg-5 col-md-5 col-sm-6 title-h4-normal"
+            id="createdOn">{{wsdDetails?.node_hints.revisionData.createdDate}}</label>
+    </div>
+    <div class="form-group">
+        <label for="modifiedBy"
+            class="col-lg-5 col-lg-offset-1 col-md-5 col-md-offset-1 col-sm-6">Modified By</label>
+        <label *ngIf="activeStage.isUserDeleted(wsdDetails?.node_hints.revisionData.lastModifiedByUserId)"
+            class="col-lg-5 col-md-5 col-sm-6 title-h4-normal"
+            id="modifiedBy">{{wsdDetails?.node_hints.revisionData.lastModifiedBy}}</label>
+        <a *ngIf="!activeStage.isUserDeleted(wsdDetails?.node_hints.revisionData.lastModifiedByUserId)"
+            class="col-lg-5 col-md-5 col-sm-6 margin-top-4"
+            href="#/Settings/Users/Info/{{wsdDetails?.node_hints.revisionData.lastModifiedByUserId}}"
+            (click)="navigateToModifiedByUserProfile()">{{wsdDetails?.node_hints.revisionData.lastModifiedBy}}</a>
+    </div>
+    <div class="form-group">
+        <label for="modifiedOn"
+            class="col-lg-5 col-lg-offset-1 col-md-5 col-md-offset-1 col-sm-6">Modified On</label>
+        <label class="col-lg-5 col-md-5 col-sm-6 title-h4-normal"
+            id="modifiedOn">{{wsdDetails?.node_hints.revisionData.lastModifiedDate}}</label>
+    </div>
+    <div class="form-group">
+        <label for="version" class="col-lg-5 col-lg-offset-1 col-md-5 col-md-offset-1 col-sm-6">SOAP Protocol</label>
+        <label class="col-lg-5 col-md-5 col-sm-6 title-h4-normal" *ngIf="wsdDetails?.isWSDLFirst"
+            id="version">{{wsdDetails?.SOAPProtocol}}</label>
+            <label class="col-lg-5 col-md-5 col-sm-6 title-h4-normal" *ngIf="!wsdDetails?.isWSDLFirst"
+            id="version">{{wsdDetails?.binderList[0]?.SOAPProtocol}}</label>
+    </div>
+    <div class="form-group">
+        <label for="version" class="col-lg-5 col-lg-offset-1 col-md-5 col-md-offset-1 col-sm-6">Target Name
+            Space</label>
+        <label class="col-lg-5 col-md-5 col-sm-6 title-h4-normal"
+                id="version">{{wsdDetails?.targetNamespace}}</label>
+    </div>
+    <div class="form-group">
+        <label for="version" class="col-lg-5 col-lg-offset-1 col-md-5 col-md-offset-1 col-sm-6">WSDL URL</label>
+        <label class="col-lg-5 col-md-5 col-sm-6 title-h4-normal"
+                    id="version">{{wsdDetails?.WSDLURL}}</label>
+    </div>
+    <div class="form-group">
+        <label for="version" class="col-lg-5 col-lg-offset-1 col-md-5 col-md-offset-1 col-sm-6">Attachment
+            Enabled</label>
+        <label class="col-lg-5 col-md-5 col-sm-6 title-h4-normal"
+                        id="version">{{wsdDetails?.attachmentEnabled}}</label>
+    </div>
+    <div class="form-group">
+        <label for="version" class="col-lg-5 col-lg-offset-1 col-md-5 col-md-offset-1 col-sm-6">Validate Schema with
+            Xerces</label>
+        <label class="col-lg-5 col-md-5 col-sm-6 title-h4-normal"
+                            id="version">{{wsdDetails?.validateSchemaUsingXerces}}</label>
+    </div>
+    <div class="form-group">
+        <label for="title" class="col-lg-5 col-lg-offset-1 col-md-5 col-md-offset-1 col-sm-6">WS-I Basic Profile 1.1 compliance</label>
+        <label class="col-lg-5 col-md-5 col-sm-6 title-h4-normal" id="title">{{wsdDetails?.WSICompliant}}</label>
+    </div>
+</form>

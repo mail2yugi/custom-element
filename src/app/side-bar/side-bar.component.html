@@ -1,0 +1,18 @@
+<div class="wizard-container">
+    <div class="mask-background">
+        <div class="row margin-left-30">
+            <div class="col-xl-2 col-lg-3 col-md-3 col-sm-3 hidden-xs remove-paddings">
+                <div class="bs-sidebar sidebar-nav-fixed side-bar-position">
+                    <ul class="nav bs-sidenav margin-right-30">
+                            <li *ngFor="let navItem of sideNavItems" class="enablednav" 
+                                        (click)="navItemClicked(navItem)" 
+                                        [ngClass]="{'activenav': navItem.isEnabled}">
+                                <i *ngIf="navItem.icon" class="{{ navItem.icon }} wmic-icon-font-size">&nbsp;</i>
+                                {{navItem.displayText}}
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

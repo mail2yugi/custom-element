@@ -1,0 +1,27 @@
+<div id="msgdiv" class="msgdivNG6" *ngIf="messageDialogService.message">
+  <div class="alert" [ngClass] = "{ 'alert-success' : (messageDialogService.messageType === 1),
+                                    'alert-danger' : (messageDialogService.messageType === 2), 
+                                    'alert-info' : (messageDialogService.messageType === 3), 
+                                    'alert-warning' : (messageDialogService.messageType === 4)}">
+    <table>
+      <tr>
+        <td>
+          <i class="icons8-check-mark-symbol message-dialog-wmic-icon success-alert" *ngIf="messageDialogService.messageType === 1"></i>
+          <i class="icons8-ban message-dialog-wmic-icon danger-alert" *ngIf="messageDialogService.messageType === 2"></i>
+          <i class="icons8-info message-dialog-wmic-icon info-alert" *ngIf="messageDialogService.messageType === 3"></i>
+          <i class="icons8-exclamation-mark message-dialog-wmic-icon warning-alert" *ngIf="messageDialogService.messageType === 4"></i>
+        </td>
+        <td class="width-100">
+          <div class="message-dialog-text" 
+          [ngClass] = "{ 'success-alert' : (messageDialogService.messageType === 1), 
+          'danger-alert' : (messageDialogService.messageType === 2), 
+          'info-alert' : (messageDialogService.messageType === 3), 
+          'warning-alert' : (messageDialogService.messageType === 4)}">{{messageDialogService.message}}</div>
+        </td>
+        <td>
+          <button id="close" class="close" (click)="closeMessage()">&times;</button>
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>
