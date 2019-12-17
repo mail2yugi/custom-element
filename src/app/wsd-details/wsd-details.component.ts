@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation, Input } from "@angular/core";
+import { Component, OnInit, ViewEncapsulation, Input, Output, EventEmitter } from "@angular/core";
 import { WsdDetailsService } from "./services/wsd-details.services";
 import { MessageDialogService, MessageType } from "../message-dialog/services/message-dialog.service";
 import { WsdWsdlUiService } from "./services/wsd-wsdl-ui.service";
@@ -24,6 +24,7 @@ export class WsdDetailsComponent implements OnInit {
 
     @Input() projectName = "";
     @Input() csrf = "";
+    @Output() gotolist: EventEmitter<any> = new EventEmitter();
 
     constructor(
         public activeStage: ActiveStageService,
@@ -100,5 +101,8 @@ export class WsdDetailsComponent implements OnInit {
         this.activeTab = index;
     }
 
+    navigateToWsdlList() {
+        this.gotolist.emit("goingtolist");
+    }
 
 }

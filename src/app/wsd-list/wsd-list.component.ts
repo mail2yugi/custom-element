@@ -28,7 +28,7 @@ export class WsdListComponent implements OnInit, AfterViewInit, OnDestroy {
     showChooseWSDTypeModal = false;
     integrationFirst = false;
     wsdlFirst = true;
-    wsdList: Array<any>;
+    wsdList: Array<any> = [];
     projectList = [];
     selectedWsd;
     selectedProject;
@@ -119,6 +119,7 @@ export class WsdListComponent implements OnInit, AfterViewInit, OnDestroy {
     @Input() projectName = "";
     @Input() csrf = "";
     @Output() addnew: EventEmitter<any> = new EventEmitter();
+    @Output() gotodet: EventEmitter<any> = new EventEmitter();
 
     constructor(
         private wsdListService: WsdListService,
@@ -135,7 +136,7 @@ export class WsdListComponent implements OnInit, AfterViewInit, OnDestroy {
             this.filterCount = count;
         });
        // this.currentStage = this.activeStage.getActiveStage();
-        this.messageDialogService.show("Component Loaded Successfully.", MessageType.success);
+      //  this.messageDialogService.show("Component Loaded Successfully.", MessageType.success);
     }
 
     ngAfterViewInit(): void {
@@ -222,6 +223,7 @@ export class WsdListComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     navigateToViewPage(wsdName) {
+        this.gotodet.emit(wsdName);
       //  location.href = "#/" + this.routeService.getNg6ProjectName() + "/wsd/view/" + wsdName;
     }
 
@@ -265,7 +267,7 @@ export class WsdListComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     setWsdList(radList) {
-        this.wsdList = radList;
+        this.wsdList = radList || [];
     }
 
     openCopyWsdModal() {

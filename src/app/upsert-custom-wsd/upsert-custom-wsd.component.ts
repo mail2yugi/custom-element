@@ -129,6 +129,7 @@ export class UpsertCustomWsdComponent implements OnInit, OnDestroy {
     }
 
     navigateToWsdlList() {
+        this.finish.emit("cancel");
      //   location.href = "#/" + this.routeService.getNg6ProjectName() + "/wsd/list";
     }
 

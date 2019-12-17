@@ -53,7 +53,7 @@
                     <div [innerHtml]="deployLinkHtml"></div>
                 </div>
             </div>
-            <div *ngIf="activeStage === 'stage00'" class="toolbar-div-buttons pull-right margin-top-97">
+            <div *ngIf="activeStage === 'stage00'" class="toolbar-div-buttons pull-right">
                 <button id="addWsd" class="btn btn-primary-live margin-left-20"
                     (click)="addNew()">Add New SOAP API</button>
             </div>
@@ -225,9 +225,9 @@
                                     </div>
                                 </td>                              
                             </tr>
-                            <tr class="no-items-todisplay border-top">
+                            <!-- <tr class="no-items-todisplay border-top">
                                 <td colspan="6">No items to display.</td>
-                            </tr>
+                            </tr> -->
                             <tr *ngFor="let wsd of wsdList ; let rowIndex = index; let isOdd=odd; let isEven=even; let isActive=selected"
                                 id="wsd_{{wsd.wsdName}}" [class.odd]="isOdd" [class.even]="isEven" (click)="onWsdSelect(wsd)" [class.active]='wsd.wsdName === selectedWsdName'>
                                 <!-- <td class="table-row-text width-3-percentage padding-left-20" *ngIf="isTenantCapableForExportImport">
@@ -262,6 +262,9 @@
                                     <!-- <a *ngIf="!activeStage.isUserDeleted(rad.revisionData.lastModifiedByUserId)" class="inline-block max-width-100-per margin-top-4"
                                         (click)="navigateToModifiedByUserProfile(rad)" href="#/Settings/Users/Info/{{rad.revisionData.lastModifiedByUserId}}">{{ rad.revisionData.lastModifiedBy}}</a> -->
                                 </td>
+                            </tr>
+                            <tr *ngIf="wsdList?.length == 0" class="no-items-todisplay">
+                                <td colspan="6">No items to display.</td>
                             </tr>
                             <!-- <tr *ngIf="wsdList == undefined" class="int-loader-div">
                                 <td colspan="5">
